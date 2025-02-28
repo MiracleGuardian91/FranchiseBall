@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-
 export interface Player {
   link: string,
   name: string,

@@ -1,13 +1,9 @@
-import { useState } from "react";
 import { Team, useTeamStore } from "../store/team.store";
-import TeamModal from "./TeamModal";
 
 const TeamTable = () => {
   const { teams } = useTeamStore() as {
     teams: Team[],
   }
-  const [isOpenDetailModal, setIsOpenDetailModal] = useState<boolean>(false);
-  const [team, setTeam] = useState<Team | null>(null);
 
   return (
     <div className="rounded-sm border border-stroke shadow-default dark:border-strokedark">
@@ -32,38 +28,33 @@ const TeamTable = () => {
             </tr>
           </thead>
           <tbody>
-            {teams.map((team, index) => (
-              <tr
-                key={index}
-                className={`${index % 2 === 1 ? 'bg-white dark:bg-bodydark' : 'bg-whiter dark:bg-bodydark1'} whitespace-nowrap cursor-pointer dark:text-strokedark hover:bg-stroke dark:hover:bg-white`}
-                onClick={() => {
-                  setTeam(team);
-                  setIsOpenDetailModal(true);
-                }}
-              >
-                <td className="px-6 py-2">{team.team_name}</td>
-                <td className="px-6 py-2">{team.win}</td>
-                <td className="px-6 py-2">{team.loss}</td>
-                <td className="px-6 py-2">{team.runs_differential}</td>
-                <td className="px-6 py-2">{team.avg}</td>
-                <td className="px-6 py-2">{team.obp}</td>
-                <td className="px-6 py-2">{team.era}</td>
-                <td className="px-6 py-2">{team.whip}</td>
-                <td className="px-6 py-2">{team.team_rank}</td>
-                <td className="px-6 py-2">{team.runs_on}</td>
-                <td className="px-6 py-2">{team.world_titles}</td>
-                <td className="px-6 py-2">{team.league_titles}</td>
-                <td className="px-6 py-2">{team.division_titles}</td>
-                <td className="px-6 py-2">{team.weighted_score}</td>
-              </tr>
-            ))}
+            {teams
+              .slice()
+              .sort((a, b) => b.weighted_score - a.weighted_score)
+              .map((team, index) => (
+                <tr
+                  key={index}
+                  className={`${index % 2 === 1 ? 'bg-white dark:bg-bodydark' : 'bg-whiter dark:bg-bodydark1'} whitespace-nowrap cursor-pointer dark:text-strokedark hover:bg-stroke dark:hover:bg-white`}
+                >
+                  <td className="px-6 py-2">{team.team_name}</td>
+                  <td className="px-6 py-2">{team.win}</td>
+                  <td className="px-6 py-2">{team.loss}</td>
+                  <td className="px-6 py-2">{team.runs_differential}</td>
+                  <td className="px-6 py-2">{team.avg}</td>
+                  <td className="px-6 py-2">{team.obp}</td>
+                  <td className="px-6 py-2">{team.era}</td>
+                  <td className="px-6 py-2">{team.whip}</td>
+                  <td className="px-6 py-2">{team.team_rank}</td>
+                  <td className="px-6 py-2">{team.runs_on}</td>
+                  <td className="px-6 py-2">{team.world_titles}</td>
+                  <td className="px-6 py-2">{team.league_titles}</td>
+                  <td className="px-6 py-2">{team.division_titles}</td>
+                  <td className="px-6 py-2">{team.weighted_score}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
-
-      {team && (
-        <TeamModal isOpen={isOpenDetailModal} onClose={() => { setIsOpenDetailModal(false) }} team={team} />
-      )}
     </div>
   )
 }

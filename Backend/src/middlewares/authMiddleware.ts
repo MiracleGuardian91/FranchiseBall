@@ -21,7 +21,6 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
       username: decoded.username,
       email: decoded.email,
     };
-    console.log(decoded);
 
     next();
   } catch (err) {

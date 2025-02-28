@@ -9,7 +9,7 @@ import 'jsvectormap/dist/css/jsvectormap.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Toaster position='top-center' />
+    <Toaster position='top-center' richColors />
     <Router>
       <App />
     </Router>

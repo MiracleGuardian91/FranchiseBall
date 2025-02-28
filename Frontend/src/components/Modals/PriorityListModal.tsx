@@ -1,6 +1,6 @@
 import { Modal } from "rizzui/modal";
-import PlayerTable from "./PlayerTable";
-import PriorityList from "./PriorityList";
+import PlayerTable from "../PlayerTable";
+import PriorityList from "../PriorityList";
 
 import { IoMdClose } from "react-icons/io";
 
