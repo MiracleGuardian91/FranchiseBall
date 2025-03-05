@@ -1,16 +1,17 @@
-import { Team, useTeamStore } from "../store/team.store";
+import { Team, useTeamStore } from "../../store/team.store";
 
-const TeamTable = () => {
-  const { teams } = useTeamStore() as {
+const AlphabeticalTeamTable = () => {
+  const { teams, lotteryTeam } = useTeamStore() as {
     teams: Team[],
+    lotteryTeam: Team
   }
 
   return (
     <div className="rounded-sm border border-stroke shadow-default dark:border-strokedark">
       <div className="overflow-y-auto max-h-[calc(100vh-8rem)]">
-        <table className='min-w-full autoborder border-stroke dark:border-strokedark'>
+        <table className="min-w-full autoborder border-stroke dark:border-strokedark">
           <thead>
-            <tr className='bg-gray dark:bg-boxdark'>
+            <tr className="bg-gray dark:bg-boxdark">
               <th className="px-6 py-4 text-left text-black dark:text-white">Name</th>
               <th className="px-6 py-4 text-left text-black dark:text-white">Win</th>
               <th className="px-6 py-4 text-left text-black dark:text-white">Loss</th>
@@ -30,11 +31,13 @@ const TeamTable = () => {
           <tbody>
             {teams
               .slice()
-              .sort((a, b) => b.weighted_score - a.weighted_score)
+              .sort((a, b) => a.team_name.localeCompare(b.team_name))
               .map((team, index) => (
                 <tr
                   key={index}
-                  className={`${index % 2 === 1 ? 'bg-white dark:bg-bodydark' : 'bg-whiter dark:bg-bodydark1'} whitespace-nowrap cursor-pointer dark:text-strokedark hover:bg-stroke dark:hover:bg-white`}
+                  className={`${index % 2 === 1 ? 'bg-white dark:bg-bodydark' : 'bg-whiter dark:bg-bodydark1'} 
+                              ${team.team_name === lotteryTeam?.team_name ? 'bg-yellow-300' : ''}
+                              whitespace-nowrap cursor-pointer dark:text-strokedark hover:bg-stroke dark:hover:bg-white`}
                 >
                   <td className="px-6 py-2">{team.team_name}</td>
                   <td className="px-6 py-2">{team.win}</td>
@@ -56,7 +59,7 @@ const TeamTable = () => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TeamTable;
+export default AlphabeticalTeamTable;

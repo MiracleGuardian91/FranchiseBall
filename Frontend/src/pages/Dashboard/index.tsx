@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import Axios from "../../config/axios";
-import { Player, usePlayerStore } from "../../store/player.store";
-import { Team, useTeamStore } from "../../store/team.store";
+import { useNavigate } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import { FiMinus } from "react-icons/fi";
 
-import AddPlayerLinkModal from "../../components/Modals/AddPlayerLinkModal";
-import PriorityListModal from "../../components/Modals/PriorityListModal";
-import LotteryModal from "../../components/Modals/LotteryModal";
+import Axios from "../../config/axios";
+import { Player, usePlayerStore } from "../../store/player.store";
+import { Team, useTeamStore } from "../../store/team.store";
+import AddPlayerLinkModal from "../../components/AddPlayerLinkModal";
+
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { loading: playerLoading, setLoading: setPlayerLoading, setPlayers } = usePlayerStore() as {
     loading: boolean,
     selectedPlayer: Player,
@@ -25,8 +26,6 @@ const Dashboard = () => {
     setTeams: (teams: Team[]) => void
   }
   const [isOpenAddPlayerLinkModal, setIsOpenAddPlayerLinkModal] = useState<boolean>(false);
-  const [isOpenPriorityListModal, setIsOpenPriorityListModal] = useState<boolean>(false);
-  const [isOpenLotteryModal, setIsOpenLotteryModal] = useState<boolean>(false);
 
   const handleRemove = (player: Player) => {
     setSelectedTeam({
@@ -199,13 +198,13 @@ const Dashboard = () => {
       <div className="flex items-center gap-3 mt-6">
         <button
           className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap"
-          onClick={() => { setIsOpenPriorityListModal(true) }}
+          onClick={() => { navigate("/players") }}
         >
-          Priority List
+          Player Pool
         </button>
         <button
           className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap"
-          onClick={() => { setIsOpenLotteryModal(true) }}
+          onClick={() => { navigate("/lottery") }}
         >
           Lottery
         </button>
@@ -216,8 +215,6 @@ const Dashboard = () => {
         </button>
       </div>
       <AddPlayerLinkModal isOpen={isOpenAddPlayerLinkModal} onClose={() => { setIsOpenAddPlayerLinkModal(false) }} />
-      <PriorityListModal isOpen={isOpenPriorityListModal} onClose={() => { setIsOpenPriorityListModal(false) }} />
-      <LotteryModal isOpen={isOpenLotteryModal} onClose={() => { setIsOpenLotteryModal(false) }} />
     </div>
   )
 }

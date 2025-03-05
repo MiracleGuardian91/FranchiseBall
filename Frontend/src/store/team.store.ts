@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { Player } from './player.store';
 
 export interface Team {
@@ -19,24 +20,23 @@ export interface Team {
   players: Player[]
 }
 
-export interface TeamStore {
-  loading: boolean;
-  setLoading: (state: boolean) => void;
-
-  selectedTeam: Team | null,
-  setSelectedTeam: (team: Team) => void;
-
-  teams: Team[];
-  setTeams: (players: Team[]) => void;
-}
-
-const useTeamStore = create<TeamStore>((set) => ({
-  loading: false,
-  setLoading: (state) => set({ loading: state }),
-  selectedTeam: null,
-  setSelectedTeam: (team) => set({ selectedTeam: team }),
-  teams: [],
-  setTeams: (teams) => set({ teams: teams }),
-}));
+const useTeamStore = create(persist(
+  (set) => ({
+    loading: false,
+    setLoading: (state: boolean) => set({ loading: state }),
+    selectedTeam: null,
+    setSelectedTeam: (team: Team) => set({ selectedTeam: team }),
+    lotteryTeam: null,
+    setLotteryTeam: (team: Team | null) => set({ lotteryTeam: team }),
+    lotteryTeams: null,
+    setLotteryTeams: (teams: Team[] | null) => set({ lotteryTeams: teams }),
+    teams: [],
+    setTeams: (teams: Team[]) => set({ teams: teams }),
+  }),
+  {
+    name: 'team-storage',
+    storage: createJSONStorage(() => localStorage)
+  }
+))
 
 export { useTeamStore }

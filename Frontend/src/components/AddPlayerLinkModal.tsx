@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Modal } from "rizzui/modal";
-import { Player, usePlayerStore } from "../../store/player.store";
-import { Team, useTeamStore } from "../../store/team.store";
+import { Player, usePlayerStore } from "../store/player.store";
+import { Team, useTeamStore } from "../store/team.store";
 
 const AddPlayerLinkModal = ({ isOpen, onClose }: {
   isOpen: boolean,

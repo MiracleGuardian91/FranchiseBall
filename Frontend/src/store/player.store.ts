@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 export interface Player {
   link: string,
   name: string,
@@ -14,27 +15,21 @@ export interface Player {
   defense: string
 }
 
-export interface PlayerStore {
-  loading: boolean;
-  setLoading: (state: boolean) => void;
-
-  selectedPlayer: Player | null,
-  setSelectedPlayer: (player: Player | null) => void,
-  priorityPlayers: Player[],
-  setPriorityPlayers: (players: Player[]) => void,
-  players: Player[];
-  setPlayers: (players: Player[]) => void;
-}
-
-const usePlayerStore = create<PlayerStore>((set) => ({
-  loading: false,
-  setLoading: (state) => set({ loading: state }),
-  selectedPlayer: null,
-  setSelectedPlayer: (player) => set({ selectedPlayer: player }),
-  priorityPlayers: [],
-  setPriorityPlayers: (players) => set({ priorityPlayers: players }),
-  players: [],
-  setPlayers: (players) => set({ players: players }),
-}));
+const usePlayerStore = create(persist(
+  (set) => ({
+    loading: false,
+    setLoading: (state: boolean) => set({ loading: state }),
+    selectedPlayer: null,
+    setSelectedPlayer: (player: Player) => set({ selectedPlayer: player }),
+    priorityPlayers: [],
+    setPriorityPlayers: (players: Player[]) => set({ priorityPlayers: players }),
+    players: [],
+    setPlayers: (players: Player[]) => set({ players: players }),
+  }),
+  {
+    name: 'player-storage',
+    storage: createJSONStorage(() => localStorage)
+  }
+));
 
 export { usePlayerStore }
