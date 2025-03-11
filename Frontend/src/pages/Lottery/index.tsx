@@ -8,13 +8,14 @@ import { Team, useTeamStore } from "../../store/team.store";
 const Lottery = () => {
   const navigate = useNavigate();
   const indexRef = useRef(0);
-  const { teams, lotteryTeam, lotteryTeams, setLotteryTeam, setLotteryTeams } = useTeamStore() as {
-    teams: Team[],
-    lotteryTeam: Team,
-    lotteryTeams: Team[],
-    setLotteryTeam: (team: Team | null) => void,
-    setLotteryTeams: (teams: Team[] | null) => void
-  }
+  const { teams, lotteryTeam, lotteryTeams, setLotteryTeam, setLotteryTeams } =
+    useTeamStore() as {
+      teams: Team[];
+      lotteryTeam: Team;
+      lotteryTeams: Team[];
+      setLotteryTeam: (team: Team | null) => void;
+      setLotteryTeams: (teams: Team[] | null) => void;
+    };
   const [disabled, setDisabled] = useState<boolean>(false);
 
   const handleStart = () => {
@@ -23,7 +24,9 @@ const Lottery = () => {
     setLotteryTeam(null);
     setLotteryTeams(null);
 
-    const sortedTeams = [...teams].sort((a, b) => a.weighted_score - b.weighted_score);
+    const sortedTeams = [...teams].sort(
+      (a, b) => b.weighted_score - a.weighted_score
+    );
     const first20Percent = sortedTeams.slice(0, 2);
 
     const interval = setInterval(() => {
@@ -32,10 +35,15 @@ const Lottery = () => {
           if (indexRef.current % 2 === 0) {
             const lowestWeightedTeam = first20Percent[0];
             setLotteryTeam(lowestWeightedTeam);
-            first20Percent.splice(first20Percent.indexOf(lowestWeightedTeam), 1);
+            first20Percent.splice(
+              first20Percent.indexOf(lowestWeightedTeam),
+              1
+            );
             indexRef.current += 1;
           } else {
-            const randomIndex = Math.ceil(Math.random() * first20Percent.length);
+            const randomIndex = Math.ceil(
+              Math.random() * first20Percent.length
+            );
             const randomTeam = first20Percent[randomIndex];
             setLotteryTeam(randomTeam);
             first20Percent.splice(randomIndex, 1);
@@ -52,7 +60,7 @@ const Lottery = () => {
         setDisabled(false);
         setLotteryTeam(null);
       }
-    }, 1000)
+    }, 3000);
   };
 
   useEffect(() => {
@@ -71,7 +79,9 @@ const Lottery = () => {
     <div className="flex flex-col gap-4">
       <button
         className="flex items-center gap-2 cursor-pointer px-3 hover:text-black hover:dark:text-white"
-        onClick={() => { navigate("/") }}
+        onClick={() => {
+          navigate("/");
+        }}
       >
         <IoArrowBackOutline className="w-5 h-5" />
         <span className="text-lg font-medium">Back</span>
@@ -90,11 +100,15 @@ const Lottery = () => {
           className="flex justify-center items-center gap-2 rounded-lg border border-primary bg-primary w-25 h-10 text-white transition hover:bg-opacity-90 font-medium whitespace-nowrap disabled:border-none disabled:bg-slate-400"
           onClick={handleStart}
         >
-          {!disabled ? "Start" : <div className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-solid border-primary border-t-transparent"></div>}
+          {!disabled ? (
+            "Start"
+          ) : (
+            <div className="h-4.5 w-4.5 animate-spin rounded-full border-2 border-solid border-primary border-t-transparent"></div>
+          )}
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Lottery;
