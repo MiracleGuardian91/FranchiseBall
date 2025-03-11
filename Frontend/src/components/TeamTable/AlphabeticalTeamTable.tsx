@@ -31,7 +31,7 @@ const AlphabeticalTeamTable = () => {
                   key={index}
                   className={`${
                     team.team_name === lotteryTeam?.team_name
-                      ? "text-yello-300 dark:text-yellow-300"
+                      ? "text-yellow-300 dark:text-yellow-300"
                       : "dark:text-white"
                   }
                   bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-strokedark ${

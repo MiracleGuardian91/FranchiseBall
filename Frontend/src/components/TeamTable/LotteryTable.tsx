@@ -10,6 +10,12 @@ const LotteryTable = () => {
     a.team_name.localeCompare(b.team_name)
   );
 
+  const blankRows: Team[] = new Array(teams.length).fill({ team_name: '' } as Team);
+  const displayTeams = lotteryTeams ? [
+    ...lotteryTeams,
+    ...blankRows.slice(0, sortedTeams.length - lotteryTeams.length),
+  ] : blankRows;
+
   return (
     <div className="rounded-sm border border-stroke shadow-default dark:border-strokedark">
       <div className="overflow-y-auto max-h-[calc(100vh-8rem)]">
@@ -17,36 +23,36 @@ const LotteryTable = () => {
           <thead>
             <tr className="bg-gray dark:bg-boxdark border-b border-stroke dark:border-b-strokedark">
               <th className="px-6 py-4 text-left text-black dark:text-white w-1/12">
-                {" "}
                 No
               </th>
               <th className="px-6 py-4 text-left text-black dark:text-white w-11/12">
-                {" "}
                 Name
               </th>
             </tr>
           </thead>
           <tbody>
-            {lotteryTeams ? (
-              lotteryTeams.slice().map((team, index) => (
+            {displayTeams.length > 0 ? (
+              displayTeams.slice().map((team, index) => (
                 <tr
                   key={index}
                   className={` bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-white ${
-                    index === lotteryTeams.length - 1
+                    index === displayTeams.length - 1
                       ? ""
                       : "border-b border-b-stroke dark:border-b-strokedark"
                   }`}
                 >
-                  <td className="px-6 py-2 w-1/12">
+                  <td className={`w-1/12 ${sortedTeams.findIndex(
+                      (item) => item.team_name === team.team_name
+                    ) === -1 ? 'py-5' : 'px-6 py-2 '}`}>
                     {sortedTeams.findIndex(
                       (item) => item.team_name === team.team_name
                     ) !== -1
                       ? sortedTeams.findIndex(
                           (item) => item.team_name === team.team_name
                         ) + 1
-                      : "N/A"}
-                  </td>{" "}
-                  <td className="px-6 py-2 w-11/12">{team.team_name}</td>{" "}
+                      : ""}
+                  </td>
+                  <td className="px-6 py-2 w-11/12">{team.team_name}</td>
                 </tr>
               ))
             ) : (
