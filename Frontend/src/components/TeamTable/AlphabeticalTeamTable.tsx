@@ -1,10 +1,36 @@
+import { useEffect, useState } from "react";
 import { Team, useTeamStore } from "../../store/team.store";
 
 const AlphabeticalTeamTable = () => {
-  const { teams, lotteryTeam } = useTeamStore() as {
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const { teams, isLotteryStarted, setLotteryStarted } = useTeamStore() as {
     teams: Team[];
-    lotteryTeam: Team;
+    isLotteryStarted: boolean;
+    setLotteryStarted: (value: boolean) => void;
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    if (isLotteryStarted) {
+      interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = prevIndex + 1;
+          if (nextIndex >= teams.length) {
+            setLotteryStarted(false);
+            return teams.length;
+          }
+          return nextIndex;
+        });
+      }, 1000);
+    } else {
+      setCurrentIndex(-1);
+      if (interval) clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLotteryStarted, teams.length, setLotteryStarted]);
 
   return (
     <div className="rounded-sm border border-stroke shadow-default dark:border-strokedark">
@@ -13,11 +39,9 @@ const AlphabeticalTeamTable = () => {
           <thead>
             <tr className="bg-gray dark:bg-boxdark border-b border-stroke dark:border-b-strokedark">
               <th className="px-6 py-4 text-left text-black dark:text-white w-1/12">
-                {" "}
                 No
               </th>
               <th className="px-6 py-4 text-left text-black dark:text-white w-11/12">
-                {" "}
                 Name
               </th>
             </tr>
@@ -30,18 +54,17 @@ const AlphabeticalTeamTable = () => {
                 <tr
                   key={index}
                   className={`${
-                    team.team_name === lotteryTeam?.team_name
-                      ? "text-yello-300 dark:text-yellow-300"
+                    index === currentIndex
+                      ? "text-yellow-300 dark:text-yellow-300"
                       : "dark:text-white"
-                  }
-                  bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-strokedark ${
+                  } bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-strokedark ${
                     index === teams.length - 1
                       ? ""
                       : "border-b border-b-stroke dark:border-b-strokedark"
                   }`}
                 >
-                  <td className="px-6 py-2 w-1/12">{index + 1}</td>{" "}
-                  <td className="px-6 py-2 w-11/12">{team.team_name}</td>{" "}
+                  <td className="px-6 py-2 w-1/12">{index + 1}</td>
+                  <td className="px-6 py-2 w-11/12">{team.team_name}</td>
                 </tr>
               ))}
           </tbody>
