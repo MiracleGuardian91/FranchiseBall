@@ -2,35 +2,58 @@ import { useEffect, useState } from "react";
 import { Team, useTeamStore } from "../../store/team.store";
 
 const AlphabeticalTeamTable = () => {
-  const [currentIndex, setCurrentIndex] = useState(-1);
-  const { teams, isLotteryStarted, setLotteryStarted } = useTeamStore() as {
-    teams: Team[];
-    isLotteryStarted: boolean;
-    setLotteryStarted: (value: boolean) => void;
-  };
+  const { teams, lotteryTeams, isLotteryStarted, setLotteryStarted } =
+    useTeamStore() as {
+      teams: Team[];
+      lotteryTeams: Team[];
+      isLotteryStarted: boolean;
+      setLotteryStarted: (value: boolean) => void;
+    };
+
+  const sortedTeams = [...teams].sort((a, b) =>
+    a.team_name.localeCompare(b.team_name)
+  );
+
+  const [currentIndex, setCurrentIndex] = useState(teams.length);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
     if (isLotteryStarted) {
       interval = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          const nextIndex = prevIndex + 1;
-          if (nextIndex >= teams.length) {
-            setLotteryStarted(false);
+          const nextIndex = prevIndex - 1;
+          if (nextIndex < 0) {
             return teams.length;
           }
+
+          const alphabeticalIndex =
+            sortedTeams.findIndex(
+              (team) => team.team_name === lotteryTeams[nextIndex].team_name
+            ) ?? -1;
+
+          if (alphabeticalIndex !== -1) {
+            setTargetIndex(alphabeticalIndex);
+          }
+
           return nextIndex;
         });
-      }, 1000);
+      }, 4000);
     } else {
-      setCurrentIndex(-1);
+      setCurrentIndex(teams.length);
       if (interval) clearInterval(interval);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isLotteryStarted, teams.length, setLotteryStarted]);
+  }, [isLotteryStarted, targetIndex]);
+
+  useEffect(() => {
+    if (currentIndex < 1) {
+      setLotteryStarted(false);
+    }
+  }, [currentIndex, setLotteryStarted]);
 
   return (
     <div className="rounded-sm border border-stroke shadow-default dark:border-strokedark">
@@ -47,26 +70,23 @@ const AlphabeticalTeamTable = () => {
             </tr>
           </thead>
           <tbody>
-            {teams
-              .slice()
-              .sort((a, b) => a.team_name.localeCompare(b.team_name))
-              .map((team, index) => (
-                <tr
-                  key={index}
-                  className={`${
-                    index === currentIndex
-                      ? "text-yellow-300 dark:text-yellow-300"
-                      : "dark:text-white"
-                  } bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-strokedark ${
-                    index === teams.length - 1
-                      ? ""
-                      : "border-b border-b-stroke dark:border-b-strokedark"
-                  }`}
-                >
-                  <td className="px-6 py-2 w-1/12">{index + 1}</td>
-                  <td className="px-6 py-2 w-11/12">{team.team_name}</td>
-                </tr>
-              ))}
+            {sortedTeams.map((team, index) => (
+              <tr
+                key={index}
+                className={`${
+                  index === targetIndex
+                    ? "text-yellow-300 dark:text-yellow-300"
+                    : "dark:text-white"
+                } bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer dark:text-strokedark ${
+                  index === teams.length - 1
+                    ? ""
+                    : "border-b border-b-stroke dark:border-b-strokedark"
+                }`}
+              >
+                <td className="px-6 py-2 w-1/12">{index + 1}</td>
+                <td className="px-6 py-2 w-11/12">{team.team_name}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

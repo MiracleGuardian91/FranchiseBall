@@ -16,7 +16,6 @@ const Lottery = () => {
       setLotteryTeams: (teams: Team[] | null) => void;
     };
 
-
   const handleStart = () => {
     countRef.current = 0;
     setLotteryTeams(null);

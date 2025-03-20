@@ -1,7 +1,7 @@
 import scrapy
 
 class FranchiseBallTeamItem(scrapy.Item):
-  team_name = scrapy.Field()
+  name = scrapy.Field()
   win = scrapy.Field()
   loss = scrapy.Field()
   runs_differential = scrapy.Field()
