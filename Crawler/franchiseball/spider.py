@@ -17,8 +17,8 @@ class FranchiseBallSpider(scrapy.Spider):
     custom_settings = {
         'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
         'ITEM_PIPELINES': {
-            'franchiseball.pipelines.SaveToTeamExcelPipeline': 1,
-            'franchiseball.pipelines.SaveToPlayerMongoDBPipeline': 2,
+            'franchiseball.pipelines.SaveTeamPipeline': 1,
+            'franchiseball.pipelines.SavePlayerPipeline': 2,
         }
     }
 
@@ -127,20 +127,20 @@ class FranchiseBallSpider(scrapy.Spider):
                 weighted_score = win * 0.2 - loss * 0.15 + runs_differential * 0.2 + avg * 0.1 + obp * 0.15 - era * 0.15 - whip * 0.05
 
                 team_item = FranchiseBallTeamItem(
-                    team_name=team_name,
-                    win=win,
-                    loss=loss,
-                    runs_differential=runs_differential,
-                    avg=avg,
-                    obp=obp,
-                    era=era,
-                    whip=whip,
-                    team_rank=team_rank,
-                    runs_on=runs_on,
-                    world_titles=world_titles,
-                    league_titles=league_titles,
-                    division_titles=division_titles,
-                    weighted_score=weighted_score
+                    name=team_name,
+                    win=int(win) if win is not None else None,
+                    loss=int(loss) if loss is not None else None,
+                    runs_differential=float(runs_differential) if runs_differential is not None else None,
+                    avg=float(avg) if avg is not None else None,
+                    obp=float(obp) if obp is not None else None,
+                    era=float(era) if era is not None else None,
+                    whip=int(whip) if whip is not None else None,
+                    team_rank=int(team_rank) if team_rank is not None else None,
+                    runs_on=int(runs_on) if runs_on is not None else None,
+                    world_titles=int(world_titles) if world_titles is not None else None,
+                    league_titles=int(league_titles) if league_titles is not None else None,
+                    division_titles=int(division_titles) if division_titles is not None else None,
+                    weighted_score=float(weighted_score) if weighted_score is not None else None
                 )
 
                 self.scraped_team_data.append(team_item)
@@ -204,15 +204,15 @@ class FranchiseBallSpider(scrapy.Spider):
             link=player_link,
             name=player_name,
             position=player_position,
-            age=player_age,
-            control=player_control,
-            movement=player_movement,
-            velocity=player_velocity,
-            stamina=player_stamina,
-            power=player_power,
-            contact=player_contact,
-            speed=player_speed,
-            defense=player_defense
+            age=int(player_age) if player_age is not None else None,
+            control=int(player_control) if player_control is not None else None,
+            movement=int(player_movement) if player_movement is not None else None,
+            velocity=int(player_velocity) if player_velocity is not None else None,
+            stamina=int(player_stamina) if player_stamina is not None else None,
+            power=int(player_power) if player_power is not None else None,
+            contact=int(player_contact) if player_contact is not None else None,
+            speed=int(player_speed) if player_speed is not None else None,
+            defense=int(player_defense) if player_defense is not None else None
         )
 
         self.scraped_player_data.append(player_item)

@@ -10,10 +10,10 @@ const LotteryTable = () => {
   const blankRows: Team[] = new Array(teams.length).fill({
     team_name: "",
   } as Team);
-  const sortedTeams = [...teams].sort(
-    (a, b) => a.team_name.localeCompare(b.team_name)
+  const sortedTeams = [...teams].sort((a, b) =>
+    a.team_name.localeCompare(b.team_name)
   );
-  const [_, setCurrentIndex] = useState<number>(-1);
+  const [_, setCurrentIndex] = useState<number>(sortedTeams.length);
   const [displayTeams, setDisplayedTeams] = useState<Team[]>(blankRows);
 
   useEffect(() => {
@@ -22,28 +22,22 @@ const LotteryTable = () => {
     if (isLotteryStarted) {
       interval = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          const nextIndex = prevIndex + 1;
-          if (nextIndex >= teams.length) {
+          const nextIndex = prevIndex - 1;
+          if (nextIndex < 0) {
             clearInterval(interval);
             return prevIndex;
           }
 
           let updatedDisplayTeams = [...displayTeams];
-          const lotteryIndex =
-            lotteryTeams?.findIndex(
-              (team) => team.team_name === sortedTeams[nextIndex].team_name
-            ) ?? -1;
-
-          if (lotteryIndex !== -1 && lotteryTeams) {
-            updatedDisplayTeams[lotteryIndex] = lotteryTeams[lotteryIndex];
-            setDisplayedTeams([...updatedDisplayTeams]);
+          if (lotteryTeams) {
+            updatedDisplayTeams[nextIndex] = lotteryTeams[nextIndex];
           }
-
+          setDisplayedTeams([...updatedDisplayTeams]);
           return nextIndex;
         });
-      }, 1000);
+      }, 4000);
     } else {
-      setCurrentIndex(-1);
+      setCurrentIndex(teams.length);
       if (interval) clearInterval(interval);
     }
 
@@ -82,10 +76,10 @@ const LotteryTable = () => {
                   }`}
                 >
                   {team.team_name
-                    ? teams?.findIndex(
+                    ? lotteryTeams?.findIndex(
                         (item) => item.team_name === team.team_name
                       ) !== undefined
-                      ? teams.findIndex(
+                      ? lotteryTeams.findIndex(
                           (item) => item.team_name === team.team_name
                         ) + 1
                       : ""
