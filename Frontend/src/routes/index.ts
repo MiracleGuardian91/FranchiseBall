@@ -1,7 +1,8 @@
 import Dashboard from "../pages/Dashboard";
 import PlayerPool from '../pages/PlayerPool';
 import Lottery from "../pages/Lottery";
-import Draft from "../pages/Draft";
+import DraftPlayer from "../pages/DraftPlayer";
+import ViewDraft from "../pages/ViewDraft";
 
 const coreRoutes = [
   {
@@ -17,8 +18,12 @@ const coreRoutes = [
     component: Lottery
   },
   {
-    path: '/draft',
-    component: Draft
+    path: '/draft_player',
+    component: DraftPlayer
+  },
+  {
+    path: '/view_draft',
+    component: ViewDraft
   }
 ];
 

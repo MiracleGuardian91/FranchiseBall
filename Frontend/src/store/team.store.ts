@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { Player } from './player.store';
 
 export interface Team {
+  _id: string,
   name: string,
   win: number,
   loss: number,
@@ -24,14 +25,14 @@ const useTeamStore = create(persist(
   (set) => ({
     loading: false,
     setLoading: (state: boolean) => set({ loading: state }),
+    teams: [],
+    setTeams: (teams: Team[]) => set({ teams: teams }),
+    lotteryTeams: null,
+    setLotteryTeams: (teams: Team[] | null) => set({ lotteryTeams: teams }),
     selectedTeam: null,
     setSelectedTeam: (team: Team) => set({ selectedTeam: team }),
     isLotteryStarted: false,
     setLotteryStarted: (value: boolean) => set({isLotteryStarted: value}),
-    lotteryTeams: null,
-    setLotteryTeams: (teams: Team[] | null) => set({ lotteryTeams: teams }),
-    teams: [],
-    setTeams: (teams: Team[]) => set({ teams: teams }),
   }),
   {
     name: 'team-storage',

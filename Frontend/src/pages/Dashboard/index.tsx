@@ -288,10 +288,18 @@ const Dashboard = () => {
         <button
           className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap"
           onClick={() => {
-            navigate("/draft");
+            navigate("/draft_player");
           }}
         >
-          Draft
+          Draft player
+        </button>
+        <button
+          className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap"
+          onClick={() => {
+            navigate("/view_draft");
+          }}
+        >
+          View Draft
         </button>
       </div>
       <AddPlayerLinkModal

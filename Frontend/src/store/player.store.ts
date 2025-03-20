@@ -17,16 +17,20 @@ export interface Player {
   isDrafted?: boolean
 }
 
+export type PriorityLists = {
+  [id: string]: Player[]
+}
+
 const usePlayerStore = create(persist(
   (set) => ({
     loading: false,
     setLoading: (state: boolean) => set({ loading: state }),
     selectedPlayer: null,
-    setSelectedPlayer: (player: Player) => set({ selectedPlayer: player }),
-    priorityPlayers: [],
-    setPriorityPlayers: (players: Player[]) => set({ priorityPlayers: players }),
+    setSelectedPlayer: (player: Player | null) => set({ selectedPlayer: player }),
     players: [],
     setPlayers: (players: Player[]) => set({ players: players }),
+    priorityLists: {} as PriorityLists,
+    setPriorityLists: (priorityLists: PriorityLists) => set({ priorityLists: priorityLists }),
   }),
   {
     name: 'player-storage',
