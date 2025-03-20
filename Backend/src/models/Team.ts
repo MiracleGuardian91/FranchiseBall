@@ -15,6 +15,7 @@ export interface ITeam extends Document {
   league_titles: number;
   division_titles: number;
   weighted_score: number;
+  lottery_rank?: number;
 }
 
 const TeamSchema = new Schema({
@@ -74,6 +75,9 @@ const TeamSchema = new Schema({
   weighted_score: {
     type: Number,
     required: true
+  },
+  lottery_rank: {
+    type: Number
   }
 })
 

@@ -1,23 +1,13 @@
-import { toast } from "sonner";
 import { Player, usePlayerStore } from "../store/player.store";
 
 const PlayerTable = () => {
-  const { players, setSelectedPlayer, priorityPlayers } = usePlayerStore() as {
+  const { players, setSelectedPlayer } = usePlayerStore() as {
     players: Player[];
     setSelectedPlayer: (player: Player) => void;
-    priorityPlayers: Player[];
   };
 
   const handleSelectPlayer = (player: Player) => {
-    const isPlayerInPriorityList = priorityPlayers.some(
-      (priorityPlayer) => priorityPlayer.name === player.name
-    );
-
-    if (isPlayerInPriorityList) {
-      toast.error("This player is already in the Priority List!");
-    } else {
-      setSelectedPlayer(player);
-    }
+    setSelectedPlayer(player);
   };
 
   return (

@@ -32,7 +32,7 @@ export const setPlayerAsDraft = async (req: Request, res: Response): Promise<voi
     );
 
     if (!player) {
-      res.status(404).json({ message: "Todo not found." });
+      res.status(404).json({ message: "Player not found." });
       return;
     }
 

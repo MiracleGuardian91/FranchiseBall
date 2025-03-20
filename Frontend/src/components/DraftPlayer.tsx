@@ -150,7 +150,7 @@ const DraftPlayer = () => {
                   ) : (
                     <button
                       disabled={loading}
-                      className="flex justify-center items-center gap-2 cursor-pointer disabled:cursor-not-allowed rounded-lg border border-primary bg-primary disabled:bg-bodydark dark:disabled:bg-steel-500/20 disabled:border-none w-16 h-9 text-white disabled:dark:text-slate-400 transition hover:bg-opacity-90 whitespace-"
+                      className="flex justify-center items-center gap-2 cursor-pointer disabled:cursor-not-allowed rounded-lg border border-primary bg-primary disabled:bg-bodydark dark:disabled:bg-steel-500/20 disabled:border-none w-16 h-9 text-white disabled:dark:text-slate-400 transition hover:bg-opacity-90 whitespace"
                       onClick={() => {
                         setPlayerAsDraft(player._id);
                       }}

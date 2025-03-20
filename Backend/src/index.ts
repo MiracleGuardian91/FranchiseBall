@@ -7,6 +7,7 @@ import connectDB from "./config/dbConfig";
 import authRoutes from './routes/authRoutes';
 import playerRoutes from './routes/playerRoutes';
 import teamRoutes from './routes/teamRoutes';
+import priorityListRoutes from './routes/priorityListRoutes';
 
 import { errorHandler } from "./middlewares/errorHandler";
 
@@ -20,6 +21,7 @@ app.use(cors());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/player", playerRoutes);
 app.use("/api/v1/team", teamRoutes);
+app.use('/api/v1/priority_list', priorityListRoutes);
 
 app.use(errorHandler);
 
