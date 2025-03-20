@@ -1,5 +1,5 @@
-import React, { ReactNode, useState } from 'react';
-import Header from '../components/Header/index';
+import React, { ReactNode, useState } from "react";
+import Header from "../components/Header/index";
 // import Sidebar from '../components/Sidebar';
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -19,9 +19,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
           {/* <!-- ===== Main Content Start ===== --> */}
           <main>
-            <div className="p-4 md:p-6">
-              {children}
-            </div>
+            <div className="p-4 md:p-6">{children}</div>
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
         </div>

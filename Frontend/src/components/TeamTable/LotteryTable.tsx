@@ -8,10 +8,10 @@ const LotteryTable = () => {
     lotteryTeams: Team[] | null;
   };
   const blankRows: Team[] = new Array(teams.length).fill({
-    team_name: "",
+    name: "",
   } as Team);
   const sortedTeams = [...teams].sort((a, b) =>
-    a.team_name.localeCompare(b.team_name)
+    a.name.localeCompare(b.name)
   );
   const [_, setCurrentIndex] = useState<number>(sortedTeams.length);
   const [displayTeams, setDisplayedTeams] = useState<Team[]>(blankRows);
@@ -72,20 +72,20 @@ const LotteryTable = () => {
               >
                 <td
                   className={`w-1/12 ${
-                    team.team_name === "" ? "py-5" : "px-6 py-2 "
+                    team.name === "" ? "py-5" : "px-6 py-2 "
                   }`}
                 >
-                  {team.team_name
+                  {team.name
                     ? lotteryTeams?.findIndex(
-                        (item) => item.team_name === team.team_name
+                        (item) => item.name === team.name
                       ) !== undefined
                       ? lotteryTeams.findIndex(
-                          (item) => item.team_name === team.team_name
+                          (item) => item.name === team.name
                         ) + 1
                       : ""
                     : ""}
                 </td>
-                <td className="px-6 py-2 w-11/12">{team.team_name}</td>
+                <td className="px-6 py-2 w-11/12">{team.name}</td>
               </tr>
             ))}
           </tbody>

@@ -1,6 +1,7 @@
 import Dashboard from "../pages/Dashboard";
 import PlayerPool from '../pages/PlayerPool';
 import Lottery from "../pages/Lottery";
+import Draft from "../pages/Draft";
 
 const coreRoutes = [
   {
@@ -14,6 +15,10 @@ const coreRoutes = [
   {
     path: '/lottery',
     component: Lottery
+  },
+  {
+    path: '/draft',
+    component: Draft
   }
 ];
 

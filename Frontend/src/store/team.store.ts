@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { Player } from './player.store';
 
 export interface Team {
-  team_name: string,
+  name: string,
   win: number,
   loss: number,
   runs_differential: number,

@@ -67,7 +67,7 @@ const Dashboard = () => {
         if (res.status === 200) {
           const allTeams = res.data;
           const targetTeam = allTeams.filter(
-            (team: Team) => team.team_name === "Cincinnati Reds"
+            (team: Team) => team.name === "Cincinnati Reds"
           );
           setTeams(allTeams);
           setSelectedTeam(targetTeam[0]);
@@ -90,7 +90,7 @@ const Dashboard = () => {
   ) : (
     <div className="flex flex-col items-center">
       <span className="text-2xl font-semibold text-black dark:text-white">
-        {selectedTeam?.team_name}
+        {selectedTeam?.name}
       </span>
       <div className="flex items-end gap-20 mt-8">
         <div className="flex flex-col items-end gap-4">
@@ -285,7 +285,12 @@ const Dashboard = () => {
         >
           Lottery
         </button>
-        <button className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap">
+        <button
+          className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white transition hover:bg-opacity-90 whitespace-nowrap"
+          onClick={() => {
+            navigate("/draft");
+          }}
+        >
           Draft
         </button>
       </div>
