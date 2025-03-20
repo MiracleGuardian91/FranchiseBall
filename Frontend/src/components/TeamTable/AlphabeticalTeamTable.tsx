@@ -10,9 +10,7 @@ const AlphabeticalTeamTable = () => {
       setLotteryStarted: (value: boolean) => void;
     };
 
-  const sortedTeams = [...teams].sort((a, b) =>
-    a.team_name.localeCompare(b.team_name)
-  );
+  const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
 
   const [currentIndex, setCurrentIndex] = useState(teams.length);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
@@ -29,7 +27,7 @@ const AlphabeticalTeamTable = () => {
 
           const alphabeticalIndex =
             sortedTeams.findIndex(
-              (team) => team.team_name === lotteryTeams[nextIndex].team_name
+              (team) => team.name === lotteryTeams[nextIndex].name
             ) ?? -1;
 
           if (alphabeticalIndex !== -1) {
@@ -84,7 +82,7 @@ const AlphabeticalTeamTable = () => {
                 }`}
               >
                 <td className="px-6 py-2 w-1/12">{index + 1}</td>
-                <td className="px-6 py-2 w-11/12">{team.team_name}</td>
+                <td className="px-6 py-2 w-11/12">{team.name}</td>
               </tr>
             ))}
           </tbody>

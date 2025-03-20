@@ -10,7 +10,9 @@ const PlayerPool = () => {
     <div className="flex flex-col gap-3">
       <button
         className="flex items-center gap-2 cursor-pointer px-3 hover:text-black hover:dark:text-white"
-        onClick={() => { navigate("/") }}
+        onClick={() => {
+          navigate("/");
+        }}
       >
         <IoArrowBackOutline className="w-5 h-5" />
         <span className="text-lg font-medium">Back</span>
@@ -24,7 +26,7 @@ const PlayerPool = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default PlayerPool;

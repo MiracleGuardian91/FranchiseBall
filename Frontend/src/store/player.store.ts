@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 export interface Player {
+  _id: string,
   link: string,
   name: string,
   position: string,
@@ -12,7 +13,8 @@ export interface Player {
   power: string,
   contact: string,
   speed: string,
-  defense: string
+  defense: string,
+  isDrafted?: boolean
 }
 
 const usePlayerStore = create(persist(
