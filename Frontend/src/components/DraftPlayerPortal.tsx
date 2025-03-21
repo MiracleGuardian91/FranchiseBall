@@ -5,7 +5,7 @@ import { FiChevronDown } from "react-icons/fi";
 import { toast } from "sonner";
 import Axios from "../config/axios";
 
-const DraftPlayer = () => {
+const DraftPlayerPortal = () => {
   const { players, setPlayers } = usePlayerStore() as {
     players: Player[];
     setPlayers: (players: Player[]) => void;
@@ -19,7 +19,8 @@ const DraftPlayer = () => {
     try {
       setLoading(true);
       const res = await Axios.put(
-        `${import.meta.env.VITE_API_URL}/player/draft/${id}`
+        `${import.meta.env.VITE_API_URL}/player/draft/${id}`,
+        { isDrafted: true }
       );
       if (res.status === 200) {
         setLoading(false);
@@ -48,7 +49,7 @@ const DraftPlayer = () => {
   }, []);
 
   return (
-    <div className="sm:flex gap-4 max-h-[calc(100vh-16rem)]">
+    <div className="sm:flex gap-4 max-h-[calc(100vh-12rem)] mt-5">
       <div className="min-w-[200px] mb-2 sm:mb-0">
         <Dropdown as="button" className="w-full">
           <Dropdown.Trigger className="w-full">
@@ -168,4 +169,4 @@ const DraftPlayer = () => {
   );
 };
 
-export default DraftPlayer;
+export default DraftPlayerPortal;

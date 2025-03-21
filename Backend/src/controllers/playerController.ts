@@ -24,10 +24,11 @@ export const setPlayerAsDraft = async (req: Request, res: Response): Promise<voi
     }
 
     const playerId = req.params.playerId;
+    const {isDrafted} = req.body;
 
     const player = await Player.findOneAndUpdate(
       {_id: playerId},
-      {'isDrafted': true},
+      {'isDrafted': isDrafted},
       {new: true}
     );
 
@@ -38,7 +39,7 @@ export const setPlayerAsDraft = async (req: Request, res: Response): Promise<voi
 
     const players = await Player.find();
     res.status(200).json({
-      message: 'Player setted as draft successfully!',
+      message: isDrafted ? 'Player setted as draft successfully!' : 'Playered removed successfully!',
       players: players
     })
 
