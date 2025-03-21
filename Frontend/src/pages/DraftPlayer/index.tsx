@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import DraftPlayerPortal from "../../components/DraftPlayerPortal";
 import { IoArrowBackOutline } from "react-icons/io5";
 
 const DraftPlayer = () => {
@@ -15,6 +16,7 @@ const DraftPlayer = () => {
         <IoArrowBackOutline className="w-5 h-5" />
         <span className="text-lg font-medium">Back</span>
       </button>
+      <DraftPlayerPortal />
     </div>
   );
 };

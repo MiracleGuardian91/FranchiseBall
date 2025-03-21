@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
+import ViewDraftPortal from "../../components/ViewDraftPortal";
 
 const ViewDraft = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const ViewDraft = () => {
         <IoArrowBackOutline className="w-5 h-5" />
         <span className="text-lg font-medium">Back</span>
       </button>
+      <ViewDraftPortal />
     </div>
   );
 };
