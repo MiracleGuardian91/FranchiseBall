@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Modal } from "rizzui/modal";
 import { Player, usePlayerStore } from "../store/player.store";
-import { Team, useTeamStore } from "../store/team.store";
+import Axios from "../config/axios";
 
 const AddPlayerLinkModal = ({
   isOpen,
@@ -11,29 +11,46 @@ const AddPlayerLinkModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [link, setLink] = useState<string>("");
-  const { players } = usePlayerStore() as { players: Player[] };
-  const { selectedTeam, setSelectedTeam } = useTeamStore() as {
-    selectedTeam: Team;
-    setSelectedTeam: (team: Team) => void;
+  const { players, setPlayers } = usePlayerStore() as {
+    players: Player[];
+    setPlayers: (players: Player[]) => void;
   };
 
-  const handleAddLink = () => {
+  const handleAddLink = async () => {
     if (link.length === 0) {
       toast.error("Input player link");
     } else if (
-      selectedTeam?.players?.some((player: Player) => player.link === link)
+      players?.some(
+        (player: Player) => player.isAdded === true && player.link === link
+      )
     ) {
       toast.error("This user is already added");
     } else {
       const player = players.find((player: Player) => player.link === link);
       if (player) {
-        setSelectedTeam({
-          ...selectedTeam,
-          players: [...(selectedTeam?.players || []), player],
-        });
-        onClose();
-        setLink("");
+        setLoading(true);
+        try {
+          const res = await Axios.put(
+            `${import.meta.env.VITE_API_URL}/player/change_added_status/${
+              player._id
+            }`,
+            {
+              isAdded: true,
+            }
+          );
+          if (res.status === 200) {
+            toast.success(res.data.message);
+            setPlayers(res.data.players);
+            onClose();
+            setLink("");
+          }
+        } catch (err: any) {
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
       } else {
         toast.error("No matched player. Input another link.");
       }
@@ -61,7 +78,8 @@ const AddPlayerLinkModal = ({
       />
       <div className="flex justify-end mt-3">
         <button
-          className="flex items-center gap-2 cursor-pointer rounded-lg border border-primary bg-primary px-4 py-1.5 text-white hover:bg-opacity-90 transition whitespace-nowrap"
+          disabled={loading}
+          className="flex justify-center items-center gap-2 cursor-pointer disabled:cursor-not-allowed rounded-lg border border-primary bg-primary disabled:bg-bodydark dark:disabled:bg-steel-500/20 disabled:border-none w-22 h-10 text-white disabled:dark:text-slate-400 transition hover:bg-opacity-90 whitespace"
           onClick={handleAddLink}
         >
           <span>Add Link</span>

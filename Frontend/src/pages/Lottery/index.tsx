@@ -16,7 +16,7 @@ const Lottery = () => {
       setLotteryTeams: (teams: Team[] | null) => void;
     };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     countRef.current = 0;
     setLotteryTeams(null);
 
@@ -53,7 +53,6 @@ const Lottery = () => {
 
   useEffect(() => {
     setLotteryStarted(false);
-    setLotteryTeams(null);
   }, []);
 
   return (

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 export interface Player {
   _id: string,
   link: string,
@@ -14,15 +13,15 @@ export interface Player {
   contact: string,
   speed: string,
   defense: string,
-  isDrafted?: boolean
+  isDrafted?: boolean,
+  isAdded?: boolean
 }
 
 export type PriorityLists = {
   [id: string]: Player[]
 }
 
-const usePlayerStore = create(persist(
-  (set) => ({
+const usePlayerStore = create((set) => ({
     loading: false,
     setLoading: (state: boolean) => set({ loading: state }),
     selectedPlayer: null,
@@ -31,11 +30,6 @@ const usePlayerStore = create(persist(
     setPlayers: (players: Player[]) => set({ players: players }),
     priorityLists: {} as PriorityLists,
     setPriorityLists: (priorityLists: PriorityLists) => set({ priorityLists: priorityLists }),
-  }),
-  {
-    name: 'player-storage',
-    storage: createJSONStorage(() => localStorage)
-  }
-));
+  }));
 
 export { usePlayerStore }
