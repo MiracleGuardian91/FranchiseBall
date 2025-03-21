@@ -4,7 +4,10 @@ import { Team, useTeamStore } from "../store/team.store";
 import { Player, PriorityLists, usePlayerStore } from "../store/player.store";
 
 const ViewDraftPortal = () => {
-  const { teams } = useTeamStore() as { teams: Team[] };
+  const { teams: initialTeams, lotteryTeams } = useTeamStore() as {
+    teams: Team[];
+    lotteryTeams: Team[];
+  };
   const { players, priorityLists } = usePlayerStore() as {
     players: Player[];
     priorityLists: PriorityLists;
@@ -16,10 +19,9 @@ const ViewDraftPortal = () => {
   const [draftedPlayers, setDraftedPlayers] =
     useState<Player[]>(initialDraftPlayers);
   const [pickedPlayers, setPickedPlayers] = useState<PriorityLists>({});
-  const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
-  const [selectedTeam, setSelectedTeam] = useState<Team>(sortedTeams[0]);
+  const teams = lotteryTeams ? lotteryTeams : initialTeams;
+  const [selectedTeam, setSelectedTeam] = useState<Team>(teams[0]);
   const [countDown, setCountDown] = useState<number>(180);
-
   const teamIndexRef = useRef(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -38,8 +40,8 @@ const ViewDraftPortal = () => {
   };
 
   const nextTeam = () => {
-    teamIndexRef.current = (teamIndexRef.current + 1) % sortedTeams.length;
-    setSelectedTeam(sortedTeams[teamIndexRef.current]);
+    teamIndexRef.current = (teamIndexRef.current + 1) % teams.length;
+    setSelectedTeam(teams[teamIndexRef.current]);
     setCountDown(180);
     startCountDown();
   };
@@ -126,14 +128,14 @@ const ViewDraftPortal = () => {
                 </tr>
               </thead>
               <tbody>
-                {sortedTeams.map((team, index) => (
+                {teams.map((team, index) => (
                   <tr
                     key={index}
                     className={`${
                       team._id === selectedTeam._id
                         ? "text-yellow-300 dark:text-yellow-300"
                         : ""
-                    } bg-white dark:bg-boxdark whitespace-nowrap cursor-pointer ${
+                    } bg-white dark:bg-boxdark whitespace-nowrap ${
                       index === teams.length - 1
                         ? ""
                         : "border-b border-b-stroke dark:border-b-strokedark"
