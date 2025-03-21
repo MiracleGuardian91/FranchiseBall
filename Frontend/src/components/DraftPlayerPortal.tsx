@@ -14,6 +14,8 @@ const DraftPlayerPortal = () => {
   const [selectedPosition, setSelectedPosition] = useState<string>("");
   const [positions, setPositions] = useState<string[]>([]);
   const [filteredPlayers, setFilteredPlayers] = useState<Player[]>([]);
+  const [isExistsDraftedPlayer, setIsExistsDraftedPlayer] =
+    useState<boolean>(false);
 
   const setPlayerAsDraft = async (id: string) => {
     try {
@@ -31,6 +33,30 @@ const DraftPlayerPortal = () => {
             (player: Player) => player.position === selectedPosition
           )
         );
+        setIsExistsDraftedPlayer(true);
+      }
+    } catch (err: any) {
+      toast.error(err.response.data.message);
+    }
+  };
+
+  const setPlayerAsUnDraft = async (id: string) => {
+    try {
+      setLoading(true);
+      const res = await Axios.put(
+        `${import.meta.env.VITE_API_URL}/player/draft/${id}`,
+        { isDrafted: false }
+      );
+      if (res.status === 200) {
+        setLoading(false);
+        toast.success(res.data.message);
+        setPlayers(res.data.players);
+        setFilteredPlayers(
+          res.data.players.filter(
+            (player: Player) => player.position === selectedPosition
+          )
+        );
+        setIsExistsDraftedPlayer(false);
       }
     } catch (err: any) {
       toast.error(err.response.data.message);
@@ -43,9 +69,12 @@ const DraftPlayerPortal = () => {
     );
     setPositions(uniquePositions);
     setSelectedPosition(uniquePositions[0]);
-    setFilteredPlayers(
-      players.filter((player: Player) => player.position === uniquePositions[0])
+    const filteredPlayers = players.filter(
+      (player: Player) => player.position === uniquePositions[0]
     );
+    const isExists = filteredPlayers.some((player) => player?.isDrafted);
+    setIsExistsDraftedPlayer(isExists);
+    setFilteredPlayers(filteredPlayers);
   }, []);
 
   return (
@@ -67,11 +96,14 @@ const DraftPlayerPortal = () => {
                 className="hover:bg-stroke dark:hover:bg-strokedark"
                 onClick={() => {
                   setSelectedPosition(position);
-                  setFilteredPlayers(
-                    players.filter(
-                      (player: Player) => player.position === position
-                    )
+                  const filteredPlayers = players.filter(
+                    (player: Player) => player.position === position
                   );
+                  setFilteredPlayers(filteredPlayers);
+                  const isExists = filteredPlayers.some(
+                    (player) => player?.isDrafted
+                  );
+                  setIsExistsDraftedPlayer(isExists);
                 }}
               >
                 {position}
@@ -145,18 +177,22 @@ const DraftPlayerPortal = () => {
                 <td className="px-6 h-12">{player.velocity}</td>
                 <td className="px-6 h-12">{player.stamina}</td>
                 <td className="px-6 h-12">{player.isDrafted ? "Yes" : "No"}</td>
-                <td className="px-6 h-12">
-                  {player.isDrafted ? (
+                <td className="px-6 h-12 flex justify-center items-center">
+                  {isExistsDraftedPlayer && !player?.isDrafted ? (
                     <></>
                   ) : (
                     <button
                       disabled={loading}
-                      className="flex justify-center items-center gap-2 cursor-pointer disabled:cursor-not-allowed rounded-lg border border-primary bg-primary disabled:bg-bodydark dark:disabled:bg-steel-500/20 disabled:border-none w-16 h-9 text-white disabled:dark:text-slate-400 transition hover:bg-opacity-90 whitespace"
+                      className="flex justify-center items-center gap-2 cursor-pointer disabled:cursor-not-allowed rounded-lg border border-primary bg-primary disabled:bg-bodydark dark:disabled:bg-steel-500/20 disabled:border-none px-3 h-9 text-white disabled:dark:text-slate-400 transition hover:bg-opacity-90 whitespace-nowrap"
                       onClick={() => {
-                        setPlayerAsDraft(player._id);
+                        if (player?.isDrafted) {
+                          setPlayerAsUnDraft(player._id);
+                        } else {
+                          setPlayerAsDraft(player._id);
+                        }
                       }}
                     >
-                      Draft
+                      {player?.isDrafted ? "Undraft" : "Draft"}
                     </button>
                   )}
                 </td>
