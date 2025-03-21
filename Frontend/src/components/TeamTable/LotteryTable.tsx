@@ -10,11 +10,15 @@ const LotteryTable = () => {
   const blankRows: Team[] = new Array(teams.length).fill({
     name: "",
   } as Team);
-  const sortedTeams = [...teams].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
   const [_, setCurrentIndex] = useState<number>(sortedTeams.length);
-  const [displayTeams, setDisplayedTeams] = useState<Team[]>(blankRows);
+  const [displayTeams, setDisplayedTeams] = useState<Team[]>(
+    lotteryTeams || blankRows
+  );
+
+  useEffect(() => {
+    if (isLotteryStarted) setDisplayedTeams(blankRows);
+  }, [isLotteryStarted]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;

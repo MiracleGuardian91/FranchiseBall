@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Team, useTeamStore } from "../../store/team.store";
+import Axios from "../../config/axios";
+import { toast } from "sonner";
 
 const AlphabeticalTeamTable = () => {
   const { teams, lotteryTeams, isLotteryStarted, setLotteryStarted } =
@@ -14,6 +16,25 @@ const AlphabeticalTeamTable = () => {
 
   const [currentIndex, setCurrentIndex] = useState(teams.length);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
+
+  const handleSaveLotteryTeams = async () => {
+    try {
+      const res = await Axios.put(
+        `${import.meta.env.VITE_API_URL}/team/update-lottery-ranks`,
+        {
+          teams: lotteryTeams,
+        }
+      );
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setLotteryStarted(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setLotteryStarted(false);
+    }
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -49,7 +70,7 @@ const AlphabeticalTeamTable = () => {
 
   useEffect(() => {
     if (currentIndex < 1) {
-      setLotteryStarted(false);
+      handleSaveLotteryTeams();
     }
   }, [currentIndex, setLotteryStarted]);
 

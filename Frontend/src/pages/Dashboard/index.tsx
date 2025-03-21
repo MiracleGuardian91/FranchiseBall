@@ -5,7 +5,11 @@ import { FiPlus } from "react-icons/fi";
 import { FiMinus } from "react-icons/fi";
 
 import Axios from "../../config/axios";
-import { Player, usePlayerStore } from "../../store/player.store";
+import {
+  Player,
+  PriorityLists,
+  usePlayerStore,
+} from "../../store/player.store";
 import { Team, useTeamStore } from "../../store/team.store";
 import AddPlayerLinkModal from "../../components/AddPlayerLinkModal";
 
@@ -13,50 +17,72 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const {
     loading: playerLoading,
+    players,
     setLoading: setPlayerLoading,
     setPlayers,
+    setPriorityLists,
   } = usePlayerStore() as {
     loading: boolean;
+    players: Player[];
     selectedPlayer: Player;
     setLoading: (state: boolean) => void;
     setPlayers: (players: Player[]) => void;
+    setPriorityLists: (priorityLists: PriorityLists) => void;
   };
   const {
     loading: teamLoading,
-    selectedTeam,
     setLoading: setTeamLoading,
-    setSelectedTeam,
     setTeams,
+    setLotteryTeams,
   } = useTeamStore() as {
     loading: boolean;
-    selectedTeam: Team;
     setLoading: (state: boolean) => void;
-    setSelectedTeam: (team: Team) => void;
     setTeams: (teams: Team[]) => void;
+    setLotteryTeams: (teams: Team[] | null) => void;
   };
   const [isOpenAddPlayerLinkModal, setIsOpenAddPlayerLinkModal] =
     useState<boolean>(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
-  const handleRemove = (player: Player) => {
-    setSelectedTeam({
-      ...selectedTeam,
-      players:
-        selectedTeam.players?.filter((p) => p.link !== player.link) || [],
-    });
+  const handleRemove = async (player: Player) => {
+    try {
+      const res = await Axios.put(
+        `${import.meta.env.VITE_API_URL}/player/change_added_status/${
+          player._id
+        }`,
+        {
+          isAdded: false,
+        }
+      );
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setPlayers(res.data.players);
+      }
+    } catch (err: any) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         setPlayerLoading(true);
-        const res = await Axios.get(`${import.meta.env.VITE_API_URL}/player`);
-        if (res.status === 200) {
-          setPlayers(res.data);
-          setPlayerLoading(false);
+        const [playerRes, priorityListRes] = await Promise.all([
+          Axios.get(`${import.meta.env.VITE_API_URL}/player`),
+          Axios.get(`${import.meta.env.VITE_API_URL}/priority_list`),
+        ]);
+        if (playerRes.status === 200) {
+          setPlayers(playerRes.data);
         }
+
+        if (priorityListRes.status === 200) {
+          setPriorityLists(priorityListRes.data.priorityLists);
+        }
+
+        setPlayerLoading(false);
       } catch (err: any) {
         setPlayerLoading(false);
-        toast.error(err.response.data.message);
+        console.log(err);
       }
     };
 
@@ -66,10 +92,20 @@ const Dashboard = () => {
         const res = await Axios.get(`${import.meta.env.VITE_API_URL}/team`);
         if (res.status === 200) {
           const allTeams = res.data;
+          const sortedTeams = allTeams.sort((a: Team, b: Team) => {
+            const rankA = a.lottery_rank ?? Infinity;
+            const rankB = b.lottery_rank ?? Infinity;
+            return rankA - rankB;
+          });
           const targetTeam = allTeams.filter(
             (team: Team) => team.name === "Cincinnati Reds"
           );
+
+          const hasLotteryRank = allTeams.every(
+            (team: Team) => team.lottery_rank !== undefined
+          );
           setTeams(allTeams);
+          setLotteryTeams(hasLotteryRank ? sortedTeams : null);
           setSelectedTeam(targetTeam[0]);
           setTeamLoading(false);
         }
@@ -171,22 +207,26 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="flex flex-col gap-3 mt-6">
-        {Array.from({ length: 5 - (selectedTeam?.players?.length || 0) }).map(
-          (_, index) => (
-            <button
-              key={index}
-              className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-gray-steel-600 dark:border-form-strokedark px-4 py-1.5 text-steel-600 dark:text-gray hover:scale-105 transition whitespace-nowrap"
-              onClick={() => {
-                setIsOpenAddPlayerLinkModal(true);
-              }}
-            >
-              <FiPlus />
-              <span>Add Player Link</span>
-            </button>
-          )
-        )}
+        {Array.from({
+          length:
+            5 -
+            (players.filter((player: Player) => player?.isAdded === true)
+              .length || 0),
+        }).map((_, index) => (
+          <button
+            key={index}
+            className="flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-gray-steel-600 dark:border-form-strokedark px-4 py-1.5 text-steel-600 dark:text-gray hover:scale-105 transition whitespace-nowrap"
+            onClick={() => {
+              setIsOpenAddPlayerLinkModal(true);
+            }}
+          >
+            <FiPlus />
+            <span>Add Player Link</span>
+          </button>
+        ))}
       </div>
-      {selectedTeam?.players?.length > 0 && (
+      {players.filter((player: Player) => player?.isAdded === true).length >
+        0 && (
         <div className="max-w-full overflow-x-auto border border-stroke dark:border-strokedark mt-4">
           <table className="autoborder">
             <thead>
@@ -231,39 +271,41 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {selectedTeam?.players.map((player, index) => (
-                <tr
-                  key={index}
-                  className={`${
-                    index % 2 === 1
-                      ? "bg-white dark:bg-bodydark"
-                      : "bg-whiter dark:bg-bodydark1"
-                  } whitespace-nowrap dark:text-strokedark`}
-                >
-                  <td className="px-6 py-2">
-                    <div
-                      className="cursor-pointer hover:text-black dark:hover:text-white"
-                      onClick={() => {
-                        handleRemove(player);
-                      }}
-                    >
-                      <FiMinus />
-                    </div>
-                  </td>
-                  <td className="px-6 py-2">{player.link}</td>
-                  <td className="px-6 py-2">{player.name}</td>
-                  <td className="px-6 py-2">{player.position}</td>
-                  <td className="px-6 py-2">{player.age}</td>
-                  <td className="px-6 py-2">{player.power}</td>
-                  <td className="px-6 py-2">{player.contact}</td>
-                  <td className="px-6 py-2">{player.speed}</td>
-                  <td className="px-6 py-2">{player.defense}</td>
-                  <td className="px-6 py-2">{player.control}</td>
-                  <td className="px-6 py-2">{player.movement}</td>
-                  <td className="px-6 py-2">{player.velocity}</td>
-                  <td className="px-6 py-2">{player.stamina}</td>
-                </tr>
-              ))}
+              {players
+                .filter((player: Player) => player?.isAdded === true)
+                ?.map((player, index) => (
+                  <tr
+                    key={index}
+                    className={`${
+                      index % 2 === 1
+                        ? "bg-white dark:bg-bodydark"
+                        : "bg-whiter dark:bg-bodydark1"
+                    } whitespace-nowrap dark:text-strokedark`}
+                  >
+                    <td className="px-6 py-2">
+                      <div
+                        className="cursor-pointer hover:text-black dark:hover:text-white"
+                        onClick={() => {
+                          handleRemove(player);
+                        }}
+                      >
+                        <FiMinus />
+                      </div>
+                    </td>
+                    <td className="px-6 py-2">{player.link}</td>
+                    <td className="px-6 py-2">{player.name}</td>
+                    <td className="px-6 py-2">{player.position}</td>
+                    <td className="px-6 py-2">{player.age}</td>
+                    <td className="px-6 py-2">{player.power}</td>
+                    <td className="px-6 py-2">{player.contact}</td>
+                    <td className="px-6 py-2">{player.speed}</td>
+                    <td className="px-6 py-2">{player.defense}</td>
+                    <td className="px-6 py-2">{player.control}</td>
+                    <td className="px-6 py-2">{player.movement}</td>
+                    <td className="px-6 py-2">{player.velocity}</td>
+                    <td className="px-6 py-2">{player.stamina}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -3,6 +3,38 @@ import PriorityLists from "../models/PriorityList";
 import { IPlayer } from "../models/Player";
 import Player from "../models/Player";
 
+export const getPriorityLists = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const priorityListDoc = await PriorityLists.findOne(); 
+
+    if (!priorityListDoc) {
+      res.status(404).json({ message: "Priority lists not found." });
+      return;
+    }
+
+    let priorityLists = priorityListDoc.priorityLists;
+    
+    if (priorityLists instanceof Map) {
+      priorityLists = Object.fromEntries(priorityLists);
+    }
+    
+    const populatedPriorityLists: { [teamId: string]: any[] } = {};
+
+    for (const [teamId, playerIds] of Object.entries(priorityLists)) {
+      const players = await Player.find({ '_id': { $in: playerIds } }).exec();
+      populatedPriorityLists[teamId] = players;
+    }
+
+    res.status(200).json({
+      message: "Priority lists saved successfully.",
+      priorityLists: populatedPriorityLists
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error. Please try again." });
+  }
+}
+
 export const savePriorityLists = async (req: Request, res: Response): Promise<void> => {
   try {
     const { priorityLists }: { priorityLists: { [teamId: string]: IPlayer[] } } = req.body;
@@ -38,7 +70,7 @@ export const savePriorityLists = async (req: Request, res: Response): Promise<vo
     await newPriorityList.save();
 
     const populatedPriorityLists: { [teamId: string]: any[] } = {};
-
+    
     for (const [teamId, playerIds] of Object.entries(updatedPriorityLists)) {
       const players = await Player.find({ '_id': { $in: playerIds } });
       populatedPriorityLists[teamId] = players;

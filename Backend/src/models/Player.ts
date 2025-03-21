@@ -15,6 +15,7 @@ export interface IPlayer extends Document {
   speed: number;
   defense: number;
   isDrafted?: boolean;
+  isAdded?: boolean;
 }
 
 const PlayerSchema = new Schema({
@@ -61,6 +62,9 @@ const PlayerSchema = new Schema({
     type: Number
   },
   isDrafted: {
+    type: Boolean
+  },
+  isAdded: {
     type: Boolean
   }
 })
